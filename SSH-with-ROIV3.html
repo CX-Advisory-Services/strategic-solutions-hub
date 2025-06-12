@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic Solutions Hub</title>
+    <!-- Chosen Palette: Warm Neutrals with Muted Teal Accent -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8; /* Warm off-white */
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link.active {
+            color: #145A5E; /* Muted Teal */
+            border-bottom-color: #145A5E;
+        }
+        .tab.active {
+            background-color: #145A5E;
+            color: #FFFFFF;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .process-step {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+        .process-step:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 1.125rem;
+            top: 2rem;
+            bottom: -1rem;
+            width: 2px;
+            background-color: #D1D5DB; /* Gray-300 */
+        }
+        .process-step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2.25rem;
+            height: 2.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            background-color: #145A5E;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+        /* Accordion specific styles */
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 1.5rem;
+            background-color: #FFFFFF;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            margin-bottom: 1rem;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 1.5rem;
+            background-color: #FDFBF8;
+            border-radius: 0.5rem;
+            margin-top: -0.5rem; /* Adjust to overlap slightly with header for smooth appearance */
+            margin-bottom: 1rem;
+        }
+        .accordion-content.active {
+            max-height: 500px; /* Adjust as needed, large enough to contain content */
+            padding-bottom: 1.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .accordion-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+        .accordion-content ul li, .client-offering-item ul li, .focus-area-list li {
+            display: flex;
+            align-items: flex-start; /* Align icon and text to the top */
+            margin-bottom: 0.5rem;
+        }
+        /* Adjusted .operationalization-list to fix alignment */
+        .operationalization-list li {
+            display: flex;
+            align-items: flex-start; /* Corrected to align items to the start */
+            margin-bottom: 0.5rem;
+        }
+        .operationalization-list li .material-icons {
+            margin-right: 0.5rem;
+            font-size: 1.25rem; /* Adjust icon size as needed */
+            color: #145A5E; /* Icon color */
+            flex-shrink: 0;
+            padding-top: 0; /* Remove padding-top for better alignment */
+        }
+        .accordion-content ul li .material-icons,
+        .client-offering-item ul li .material-icons,
+        .focus-area-list li .material-icons {
+            margin-right: 0.5rem;
+            font-size: 1.25rem; /* Adjust icon size as needed */
+            color: #145A5E; /* Icon color */
+            flex-shrink: 0; /* Prevent icon from shrinking */
+        }
+
+        /* Styles for bold and larger text in value proposition */
+        .value-prop-card .heading-bold {
+            font-size: 1.25rem; /* Larger font size */
+            font-weight: 700; /* Bold */
+            color: #145A5E;
+            text-align: center;
+            margin-bottom: 0.5rem; /* Added margin for spacing */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-[#145A5E]">Strategic Solutions Hub</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#overview" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-[#145A5E] border-b-2 border-transparent">Overview</a>
+                        <a href="#blueprint" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-[#145A5E] border-b-2 border-transparent">The Blueprint</a>
+                        <a href="#commercials" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-[#145A5E] border-b-2 border-transparent">Commercial Models</a>
+                        <a href="#offerings" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-[#145A5E] border-b-2 border-transparent">Client Offerings</a>
+                        <a href="#roi" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-[#145A5E] border-b-2 border-transparent">Return on Investment</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Section 1: Overview -->
+        <section id="overview" class="py-16 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-6xl font-extrabold tracking-tight text-gray-900 sm:text-7xl md:text-8xl">A Low-Risk, High-Reward Innovation Lab</h1>
+                <p class="mt-6 max-w-2xl mx-auto text-lg text-gray-600">At the Strategic Solutions Hub, we provide a dedicated environment designed for forward-thinking organizations like yours. Rapidly prototype, rigorously test, and expertly refine process improvements, cutting-edge automation initiatives, and emerging technology solutions—especially AI—before you commit to full-scale deployment across your operations. It's your low-risk, high-reward innovation laboratory.</p>
+
+                <div class="mt-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-8">Why Partner with Our Strategic Solutions Hub?</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                        <div class="bg-[#FDFBF8] p-6 rounded-lg shadow-sm flex flex-col items-center value-prop-card">
+                            <h3 class="heading-bold">Our Approach: Data-Driven Insights & Services Design</h3>
+                            <p class="mt-2 text-gray-600 text-center">We optimize solutions in a controlled environment with a data-driven approach, ensuring your investments in innovation yield maximum return and achieve customized solutions tailored precisely to your needs.</p>
+                        </div>
+                        <div class="bg-[#FDFBF8] p-6 rounded-lg shadow-sm flex flex-col items-center value-prop-card">
+                            <h3 class="heading-bold">The Hub: Accelerated Innovation & Transformation</h3>
+                            <p class="mt-2 text-gray-600 text-center">Our Hub provides a streamlined path from ideation to pilot, dramatically shortening your time-to-value for new solutions and giving you a significant competitive advantage.</p>
+                        </div>
+                        <div class="bg-[#FDFBF8] p-6 rounded-lg shadow-sm flex flex-col items-center value-prop-card">
+                            <h3 class="heading-bold">Our Experts: Access to Specialized Expertise</h3>
+                            <p class="mt-2 text-gray-600 text-center">Gain unparalleled access to our specialized expertise in process improvement, emerging technologies, and highly skilled talent, ensuring your projects are in expert hands.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: The Blueprint -->
+        <section id="blueprint" class="py-16 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">The Strategic Solutions Hub Blueprint</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Explore the structure, focus areas, team, and implementation pathway of the Strategic Solutions Hub.</p>
+                </div>
+
+                <div class="mt-16 space-y-16">
+                    <div>
+                        <h3 class="text-2xl font-bold text-center mb-8">Core Functions: Design, Test, Build</h3>
+                        <div class="flex flex-col md:flex-row items-center justify-center gap-8 text-center">
+                            <div class="p-6 rounded-lg bg-white shadow-md flex-1">
+                                <h4 class="text-xl font-semibold text-[#145A5E]">1. Design</h4>
+                                <p class="mt-2 text-gray-600">Collaboratively identify pain points, define project scope, and design potential solutions through needs assessments and feasibility studies.</p>
+                            </div>
+                            <div class="text-2xl font-bold text-gray-400 mx-4">→</div>
+                             <div class="p-6 rounded-lg bg-white shadow-md flex-1">
+                                <h4 class="text-xl font-semibold text-[#145A5E]">2. Test</h4>
+                                <p class="mt-2 text-gray-600">Build and rigorously test prototypes and pilot projects in a controlled environment, using data to iterate and refine solutions.</p>
+                            </div>
+                            <div class="text-2xl font-bold text-gray-400 mx-4">→</div>
+                             <div class="p-6 rounded-lg bg-white shadow-md flex-1">
+                                <h4 class="text-xl font-semibold text-[#145A5E]">3. Build</h4>
+                                <p class="mt-2 text-gray-600">Develop fully functional, scalable solutions ready for deployment with robust development and integration planning.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-16">
+                        <h3 class="text-2xl font-bold text-center mb-8">Focus Areas</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="p-6 rounded-lg bg-white shadow-md">
+                                <h4 class="text-xl font-semibold text-[#145A5E]">Process Improvement and Innovation</h4>
+                                <ul class="mt-2 text-gray-600 list-none space-y-1 focus-area-list">
+                                    <li><i class="material-icons text-[#145A5E]">swap_horiz</i> Workflow Optimization: Identify and eliminate bottlenecks in existing processes.</li>
+                                    <li><i class="material-icons text-[#145A5E]">auto_awesome</i> Automation Opportunities: Identify tasks that can be automated using RPA, AI, or other technologies.</li>
+                                    <li><i class="material-icons text-[#145A5E]">edit_square</i> Process Redesign: Develop entirely new, more efficient ways of working.</li>
+                                </ul>
+                            </div>
+                            <div class="p-6 rounded-lg bg-white shadow-md">
+                                <h4 class="text-xl font-semibold text-[#145A5E]">New and Emerging Technology Solutions</h4>
+                                <ul class="mt-2 text-gray-600 list-none space-y-1 focus-area-list">
+                                    <li><i class="material-icons text-[#145A5E]">smart_toy</i> AI/Machine Learning: Explore applications of AI, using our Transcom Product Portfolio, and in partnership with T:Labs.</li>
+                                    <li><i class="material-icons text-[#145A5E]">add_reaction</i> Other Emerging Tech: Stay abreast of other relevant technologies and assess their potential for the client.</li>
+                                    <li><i class="material-icons text-[#145A5E]">travel_explore</i> Technology Scouting: Actively research and evaluate new technologies as they emerge.</li>
+                                </ul>
+                            </div>
+                            <div class="p-6 rounded-lg bg-white shadow-md col-span-1 md:col-span-2">
+                                <h4 class="text-xl font-semibold text-[#145A5E]">Operationalization of Client Strategy (Incubation Projects)</h4>
+                                <p class="mt-2 text-gray-600">These are the core projects undertaken within the Strategic Solutions Hub. They should be:</p>
+                                <ul class="mt-2 text-gray-600 list-none space-y-1 operationalization-list">
+                                    <li><i class="material-icons text-[#145A5E]">groups</i> People-Focused: Consider the impact on your workforce and ensure solutions are user-friendly.</li>
+                                    <li><i class="material-icons text-[#145A5E]">devices</i> Technology-Enabled: Leverage cutting-edge technology to achieve the desired outcomes.</li>
+                                    <li><i class="material-icons text-[#145A5E]">track_changes</i> Strategically Aligned: Directly address your key business objectives and challenges.</li>
+                                    <!-- Removed the 'Measurable' bullet point -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-16">
+                         <h3 class="text-2xl font-bold text-center mb-8">Implementation Steps</h3>
+                         <div class="max-w-3xl mx-auto">
+                            <div class="space-y-8">
+                                <div class="process-step">
+                                    <div class="process-step-number">1</div>
+                                    <h4 class="text-lg font-semibold">Client Selection & Needs Assessment Workshop</h4>
+                                    <p class="text-gray-600">Identify top global clients who are strategically aligned with your Strategic Solutions Hub's focus areas and have a demonstrated commitment to innovation. Conduct a workshop with the selected client to understand their challenges, priorities, and desired outcomes.</p>
+                                </div>
+                                <div class="process-step">
+                                    <div class="process-step-number">2</div>
+                                    <h4 class="text-lg font-semibold">Strategic Solutions Hub Proposal & Contracting</h4>
+                                    <p class="mt-2 text-gray-600">Develop a customized proposal outlining the Strategic Solutions Hub's structure, team, focus areas, and proposed projects. Establish a clear contract outlining the scope of work, deliverables, intellectual property ownership, and pricing.</p>
+                                </div>
+                                <div class="process-step">
+                                    <div class="process-step-number">3</div>
+                                    <h4 class="text-lg font-semibold">Infrastructure Setup & Project Initiation</h4>
+                                    <p class="mt-2 text-gray-600">Establish the physical or virtual environment for the Strategic Solutions Hub, including necessary hardware, software, and tools. Kick off the first incubation projects, following the Design-Test-Build methodology.</p>
+                                </div>
+                                <div class="process-step">
+                                    <div class="process-step-number">4</div>
+                                    <h4 class="text-lg font-semibold">Continuous Improvement & Internal Marketing</h4>
+                                    <p class="mt-2 text-gray-600">Regularly review and refine the Strategic Solutions Hub's processes and capabilities based on feedback and results. Publicize the service internally and educate sales teams.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Commercial Models -->
+        <section id="commercials" class="py-16 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">Commercial Models</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">We offer flexible commercial models to suit different client needs and risk appetites. Explore the options to find the best fit for your innovation goals.</p>
+                </div>
+
+                <div class="mt-12 max-w-4xl mx-auto">
+                    <div id="commercials-tabs" class="flex flex-wrap justify-center gap-2 mb-8">
+                        <button data-tab="tiered" class="tab px-4 py-2 text-sm font-semibold rounded-full bg-gray-200 text-gray-700">Tiered Subscription</button>
+                        <button data-tab="gain-sharing" class="tab px-4 py-2 text-sm font-semibold rounded-full bg-gray-200 text-gray-700">Gain-Sharing</button>
+                        <button data-tab="co-investment" class="tab px-4 py-2 text-sm font-semibold rounded-full bg-gray-200 text-gray-700">Co-Investment</button>
+                        <button data-tab="innovation-fund" class="tab px-4 py-2 text-sm font-semibold rounded-full bg-gray-200 text-gray-700">Innovation Fund</button>
+                        <button data-tab="outcome-based" class="tab px-4 py-2 text-sm font-semibold rounded-full bg-gray-200 text-gray-700">Outcome-Based</button>
+                    </div>
+
+                    <div id="commercials-content" class="bg-[#FDFBF8] p-8 rounded-lg shadow-inner">
+                        <div data-tab="tiered" class="tab-content">
+                            <h3 class="text-xl font-bold text-[#145A5E]">Tiered Access & Subscription Model (with "Freemium" Option)</h3>
+                            <ul class="mt-2 text-gray-600 list-none space-y-2">
+                                <li><i class="material-icons text-[#145A5E]">loyalty</i> Limited "Taste" (Freemium): Access to thought leadership, general workshops, high-level assessments, and limited knowledge base. Ideal for lead generation and building relationships.</li>
+                                <li><i class="material-icons text-[#145A5E]">credit_card</i> Standard Tier: Monthly/annual subscription for defined "innovation credits" or hours and participation in smaller incubation projects. Provides ongoing value and recurring revenue.</li>
+                                <li><i class="material-icons text-[#145A5E]">stars</i> Premium Tier: Higher subscription unlocks unlimited/larger "innovation credits," priority access to our team, larger/more complex projects, and dedicated resources. Perfect for significant innovation needs.</li>
+                                <li><i class="material-icons text-[#145A5E]">request_quote</i> Project-Based Fees: Transparent additional fees for projects exceeding allocated credits/hours across all tiers (above Basic). Ensures flexibility and fair compensation for extensive engagements.</li>
+                            </ul>
+                        </div>
+                        <div data-tab="gain-sharing" class="tab-content">
+                             <h3 class="text-xl font-bold text-[#145A5E]">Gain-Sharing Model (Performance-Based)</h3>
+                            <p class="mt-2 text-gray-600">Agree on specific, measurable KPIs for Strategic Solutions Hub projects (e.g., cost reduction, efficiency gains, revenue increase). A percentage of the achieved improvement is shared with our organization.</p>
+                             <ul class="mt-4 text-gray-600 list-none space-y-2">
+                                <li><i class="material-icons text-[#145A5E]">check_circle</i> Pros: Strongly aligns incentives, direct reward for tangible results, clear path to ROI, potentially very profitable.</li>
+                                <li><i class="material-icons text-[#145A5E]">error_outline</i> Cons: Requires careful KPI negotiation, high trust/transparency, revenue dependent on client's implementation success, complex measurement attribution.</li>
+                            </ul>
+                            <h4 class="text-lg font-semibold mt-6 mb-4">Project Process Flow:</h4>
+                            <div class="space-y-4 text-sm">
+                                <p><strong>1. Engagement & KPI Definition:</strong> Identify opportunity and agree on measurable KPIs that the Strategic Solutions Hub projects will impact, and the gain-sharing percentage.</p>
+                                <p><strong>2. Contracting:</strong> Formalize KPIs, measurement methodology, and terms in a legal agreement.</p>
+                                <p><strong>3. Project Execution:</strong> The Strategic Solutions Hub implements the solution to impact the defined KPIs.</p>
+                                <p><strong>4. Performance Measurement:</strong> Post-implementation, monitor KPIs and calculate the value of the gains.</p>
+                                <p><strong>5. Verification & Reward:</strong> Present gains to the client for verification, then invoice for the shared percentage.</p>
+                            </div>
+                        </div>
+                        <div data-tab="co-investment" class="tab-content">
+                            <h3 class="text-xl font-bold text-[#145A5E]">Co-Investment Model (Shared Risk, Shared Reward)</h3>
+                            <p class="mt-2 text-gray-600">We will both invest in the Strategic Solutions Hub's infrastructure and project costs (e.g., 50/50 split). Both parties share in the benefits (IP ownership, cost savings, revenue generated).</p>
+                            <ul class="mt-4 text-gray-600 list-none space-y-2">
+                                <li><i class="material-icons text-[#145A5E]">thumb_up</i> Pros: Demonstrates commitment, reduces your upfront financial burden, fosters deeper partnership.</li>
+                                <li><i class="material-icons text-[#145A5E]">warning_amber</i> Cons: Requires high trust/collaboration, complex legal/operational structure, shared risk if projects are unsuccessful.</li>
+                            </ul>
+                        </div>
+                        <div data-tab="innovation-fund" class="tab-content">
+                            <h3 class="text-xl font-bold text-[#145A5E]">Zenith Loyalty Program: "Innovation Credits" Model</h3>
+                            <p class="mt-2 text-gray-600">Take part in our Zenith Loyalty Program and let's establish your "innovation credits". The Strategic Solutions Hub proposes projects, and you approve them based on your strategic priorities and potential ROI.</p>
+                            <ul class="mt-4 text-gray-600 list-none space-y-2">
+                                <li><i class="material-icons text-[#145A5E]">star_half</i> Pros: Enjoy innovation credits that you earn by being a member.</li>
+                                <li><i class="material-icons text-[#145A5E]">sentiment_satisfied_alt</i> Cons: None.</li>
+                            </ul>
+                        </div>
+                         <div data-tab="outcome-based" class="tab-content">
+                            <h3 class="text-xl font-bold text-[#145A5E]">Outcome-Based Pricing (Fixed Fee for Defined Outcomes)</h3>
+                            <p class="mt-2 text-gray-600">Let's agree on a fixed price for achieving a pre-defined, measurable outcome, rather than hourly rates or project-based fees. Example: "Reduce customer service call handling time by 15% for a fixed fee of $X."</p>
+                            <ul class="mt-4 text-gray-600 list-none space-y-2">
+                                <li><i class="material-icons text-[#145A5E]">verified_user</i> Pros: Provides price certainty, focuses on delivering value.</li>
+                                <li><i class="material-icons text-[#145A5E]">block</i> Cons: Requires precise understanding of problem/solution.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Client Offerings -->
+        <section id="offerings" class="py-16 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                 <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">Client Offerings: Engage with Our Expertise</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">We invite you to engage with our Strategic Solutions Hub through a range of flexible offerings, each designed to demonstrate our value and build trust with minimal initial commitment from your side.</p>
+                </div>
+                <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-md client-offering-item">
+                        <h3 class="text-xl font-bold text-[#145A5E]">Enhanced "Champion-Challenger"</h3>
+                        <ul class="mt-2 text-gray-600 list-none space-y-1">
+                            <li><i class="material-icons text-[#145A5E]">compare_arrows</i> Low-risk trial: Your current operations ("Champion") compete against our Strategic Solutions Hub team ("Challenger") replicating a portion of your operations.</li>
+                            <li><i class="material-icons text-[#145A5E]">check_box</i> Success-based commitment: If our Challenger meets/exceeds agreed criteria, you commit to scaling a pre-defined portion of operations with us.</li>
+                            <li><i class="material-icons text-[#145A5E]">insights</i> Benefits: Objective comparison, data-driven decisions, immediate improvements, strong sales tool, deep operational insight.</li>
+                        </ul>
+                    </div>
+                     <div class="bg-white p-8 rounded-lg shadow-md client-offering-item">
+                        <h3 class="text-xl font-bold text-[#145A5E]">Strategic Solutions Hub "Diagnostic" Assessments</h3>
+                        <ul class="mt-2 text-gray-600 list-none space-y-1">
+                            <li><i class="material-icons text-[#145A5E]">search</i> Free/low-cost assessment: Focused analysis of a specific operational area using our capabilities.</li>
+                            <li><i class="material-icons text-[#145A5E]">map</i> Includes: Process mapping, technology audit, data analysis.</li>
+                            <li><i class="material-icons text-[#145A5E]">description</i> Deliverable: Concise report with findings, recommendations, and potential ROI. Valuable even without a larger contract.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md client-offering-item">
+                        <h3 class="text-xl font-bold text-[#145A5E]">Strategic Solutions Hub "Showcases" & Demonstrations</h3>
+                        <ul class="mt-2 text-gray-600 list-none space-y-1">
+                            <li><i class="material-icons text-[#145A5E]">web_asset</i> Targeted Demos: Highly targeted demonstrations within the Strategic Solutions Hub addressing your specific pain points.</li>
+                            <li><i class="material-icons text-[#145A5E]">play_circle</i> "Day in the Life" Simulations: Showcasing how our processes, technology, and people handle your workload.</li>
+                            <li><i class="material-icons text-[#145A5E]">group</i> Interactive Workshops: Engage with our team, explore our technology, and discuss your specific needs.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-md client-offering-item">
+                        <h3 class="text-xl font-bold text-[#145A5E]">Strategic Solutions Hub "Innovation Sprints"</h3>
+                        <ul class="mt-2 text-gray-600 list-none space-y-1">
+                            <li><i class="material-icons text-[#145A5E]">flash_on</i> Short, Focused Engagements: 1-2 week sprints to address a specific, well-defined problem or opportunity.</li>
+                            <li><i class="material-icons text-[#145A5E]">diversity_2</i> Collaborative Approach: We work closely with your team during the sprint.</li>
+                            <li><i class="material-icons text-[#145A5E]">work_outline</i> Tangible Output: Deliver a prototype, proof-of-concept, or detailed plan of action at the end of the sprint.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Return on Investment with Accordion -->
+        <section id="roi" class="py-16 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">Your Return on Investment: A Partnership for Measurable Growth</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Engaging with our Strategic Solutions Hub is not a cost; it is a strategic investment in the future resilience and efficiency of your operations. Our "innovation playground" is designed as a powerful engine to deliver a multifaceted return, directly impacting your bottom line, customer loyalty, and long-term technological health. We measure our success by your success, focusing on three core pillars of ROI:</p>
+                </div>
+
+                <div class="mt-12 max-w-3xl mx-auto space-y-4">
+                    <!-- Accordion Item 1: Drive Significant Cost Optimization -->
+                    <div class="accordion-item">
+                        <div class="accordion-header flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-[#145A5E] flex items-center">
+                                <svg class="w-6 h-6 mr-3 text-[#145A5E]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.592 1M12 8c-1.11 0-2.08.402-2.592 1m0 0a1.997 1.997 0 010 4m-4-8a2.986 2.986 0 00-2 3c0 1.5.895 3 2 3m0 0a1.997 1.997 0 010 4m-4-4a2.986 2.986 0 00-2-3c0 1.5.895 3 2 3"></path></svg>
+                                1. Drive Significant Cost Optimization
+                            </h3>
+                            <svg class="accordion-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="accordion-content">
+                            <p class="mt-2 text-gray-600">The Strategic Solutions Hub provides a controlled environment to re-engineer processes and test technologies before you commit to a large-scale rollout. This "test-before-you-invest" model systematically de-risks innovation and is a direct path to significant cost savings.</p>
+                            <ul class="mt-2 text-gray-600 list-none space-y-1">
+                                <li><i class="material-icons text-[#145A5E]">tune</i> Process Improvement Initiatives: By mapping your current workflows, we can pilot automation (RPA), streamline complex tasks, and eliminate redundant activities, leading to direct cost reduction.</li>
+                                <li><i class="material-icons text-[#145A5E]">rocket_launch</i> Efficient Technology Deployment: We ensure you deploy the right technology, configured the right way, for the right problem, preventing costly missteps and ensuring effective value from day one.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 2: Elevate Key Customer Experience (CX) Metrics -->
+                    <div class="accordion-item">
+                        <div class="accordion-header flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-[#145A5E] flex items-center">
+                                <svg class="w-6 h-6 mr-3 text-[#145A5E]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21H3.737a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.737 10H14zm0 0V5a2 2 0 00-2-2h-1a2 2 0 00-2 2v5m7-8a2 2 0 100 4m-7 8a2 2 0 100 4"></path></svg>
+                                2. Elevate Key Customer Experience (CX) Metrics
+                            </h3>
+                            <svg class="accordion-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="accordion-content">
+                            <p class="mt-2 text-gray-600">Superior customer experience is a direct result of efficient, effective, and empathetic internal processes. The Strategic Solutions Hub focuses on initiatives that not only cut costs but also create smoother, faster, and more satisfying journeys for your customers.</p>
+                            <ul class="mt-2 text-gray-600 list-none space-y-1">
+                                <li><i class="material-icons text-[#145A5E]">sentiment_satisfied</i> Customer Satisfaction (CSAT) and Net Promoter Score (NPS): By resolving issues quickly and leveraging AI for personalized interactions, we create positive experiences that boost CSAT scores and turn detractors into loyal promoters.</li>
+                                <li><i class="material-icons text-[#145A5E]">support_agent</i> First Contact Resolution (FCR): We test and deploy new knowledge management systems, agent-assist AI tools, and optimized workflows to empower frontline teams to solve customer issues on the very first try, improving satisfaction and lowering costs.</li>
+                                <li><i class="material-icons text-[#145A5E]">timer</i> Average Handling Time (AHT) and Service Levels: We identify and resolve system or process bottlenecks, reducing AHT without sacrificing quality, enabling you to meet and exceed service level agreements consistently.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Item 3: Lower the Total Cost of Ownership (TCO) for Technology -->
+                    <div class="accordion-item">
+                        <div class="accordion-header flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-[#145A5E] flex items-center">
+                                <svg class="w-6 h-6 mr-3 text-[#145A5E]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                                3. Lower the Total Cost of Ownership (TCO) for Technology
+                            </h3>
+                            <svg class="accordion-icon w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="accordion-content">
+                            <p class="mt-2 text-gray-600">The initial purchase price of technology is only a fraction of its true cost. Our Strategic Solutions Hub focuses on ensuring your technology deployments are successful and sustainable, which dramatically lowers your TCO over its entire lifecycle.</p>
+                            <ul class="mt-2 text-gray-600 list-none space-y-1">
+                                <li><i class="material-icons text-[#145A5E]">inventory_2</i> Avoiding "Shelf-ware": By validating technology against your real-world use cases, we ensure high user adoption and prevent investment in powerful tools that end up unused.</li>
+                                <li><i class="material-icons text-[#145A5E]">link</i> Optimized for Integration and Scalability: We prototype solutions to ensure they integrate seamlessly with your existing technology stack and are architected to scale effectively, preventing massive, unforeseen costs.</li>
+                                <li><i class="material-icons text-[#145A5E]">build</i> Reduced Long-Term Support Costs: A well-designed and properly deployed system is inherently more stable, requiring less ongoing maintenance, fewer support tickets, and less administrative overhead, contributing directly to a lower TCO.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 text-center text-gray-400 text-sm">
+            <p>Strategic Solutions Hub Interactive Blueprint</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation scroll behavior
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.4
+            };
+
+            const sectionObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                sectionObserver.observe(section);
+            });
+
+            navLinks.forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Tabs functionality
+            function setupTabs(containerId) {
+                const tabContainer = document.getElementById(containerId);
+                if (!tabContainer) return;
+
+                const tabs = tabContainer.querySelectorAll('.tab');
+                const contentContainer = document.getElementById(tabContainer.id.replace('-tabs', '-content'));
+                if (!contentContainer) return;
+
+                const tabContents = contentContainer.querySelectorAll('.tab-content');
+
+                function activateTab(tabId) {
+                    tabs.forEach(tab => {
+                        tab.classList.toggle('active', tab.dataset.tab === tabId);
+                    });
+                    tabContents.forEach(content => {
+                        content.classList.toggle('active', content.dataset.tab === tabId);
+                    });
+                }
+
+                // Set initial active tab to "Tiered Subscription" (first tab, index 0)
+                if (tabs.length > 0) {
+                   activateTab(tabs[0].dataset.tab); 
+                }
+
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        activateTab(tab.dataset.tab);
+                    });
+                });
+            }
+
+            setupTabs('commercials-tabs');
+
+            // Accordion functionality for ROI section
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling; // Get the content div
+                    const isActive = header.classList.contains('active');
+
+                    // Close all other open accordions
+                    accordionHeaders.forEach(otherHeader => {
+                        if (otherHeader !== header && otherHeader.classList.contains('active')) {
+                            otherHeader.classList.remove('active');
+                            otherHeader.nextElementSibling.classList.remove('active');
+                        }
+                    });
+
+                    // Toggle current accordion
+                    header.classList.toggle('active');
+                    content.classList.toggle('active');
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>
